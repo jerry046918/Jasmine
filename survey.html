@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>试用期管理体验调研</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Playfair+Display:wght@600;700&display=swap');
+        
+        :root {
+            --primary: #2D3436;
+            --accent: #6C5CE7;
+            --accent-light: #A29BFE;
+            --success: #00B894;
+            --warning: #FDCB6E;
+            --danger: #E74C3C;
+            --bg: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            --card: #FFFFFF;
+            --text: #2D3436;
+            --text-light: #636E72;
+            --border: #E9ECEF;
+            --shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .header-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+        }
+        
+        .header-card h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+        }
+        
+        .header-card p {
+            color: var(--text-light);
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+        
+        .emoji-title {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-bar {
+            background: var(--border);
+            height: 8px;
+            border-radius: 4px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+        
+        .question-card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .question-number {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            line-height: 32px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-right: 0.75rem;
+        }
+        
+        .question-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: flex-start;
+            line-height: 1.6;
+        }
+        
+        .question-desc {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin: -0.75rem 0 1.25rem 2.5rem;
+            font-style: italic;
+        }
+        
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            background: #F8F9FA;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .option-item:hover {
+            background: #E9ECEF;
+            transform: translateX(5px);
+        }
+        
+        .option-item.selected {
+            background: rgba(108, 92, 231, 0.1);
+            border-color: var(--accent);
+        }
+        
+        .option-item input {
+            width: 22px;
+            height: 22px;
+            margin-right: 1rem;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+        
+        .option-icon {
+            font-size: 1.5rem;
+            margin-right: 0.75rem;
+        }
+        
+        .option-text {
+            flex: 1;
+            font-size: 1rem;
+            color: var(--text);
+        }
+        
+        .option-sub {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1);
+        }
+        
+        .btn-submit {
+            width: 100%;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.4);
+            margin-top: 1rem;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(108, 92, 231, 0.5);
+        }
+        
+        .section-divider {
+            text-align: center;
+            margin: 2.5rem 0;
+            position: relative;
+        }
+        
+        .section-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .section-tag {
+            display: inline-block;
+            background: rgba(255,255,255,0.95);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: var(--accent);
+            font-weight: 500;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+        
+        .success-page {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--card);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+        }
+        
+        .success-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .success-page h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .success-page p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+        
+        .hidden { display: none !important; }
+        
+        @media (max-width: 600px) {
+            .header-card h1 { font-size: 1.6rem; }
+            .question-card { padding: 1.5rem; }
+            .option-item { padding: 0.875rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header-card" id="header-section">
+            <div class="emoji-title">🎯</div>
+            <h1>试用期管理体验调研</h1>
+            <p>嗨！我们想听听你对试用期管理流程的真实感受～<br>这份问卷大约需要 3-5 分钟，你的反馈对我们非常重要！✨</p>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-text" id="progress-text">准备开始...</div>
+        </div>
+
+        <!-- 问卷表单 -->
+        <form id="survey-form">
+            
+            <!-- 受访者信息 -->
+            <div class="question-card">
+                <div class="question-title">
+                    <span class="question-number">👤</span>
+                    请先填写您的基本信息
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: var(--text);">受访人姓名 <span style="color: var(--danger);">*</span></label>
+                    <input type="text" name="respondent_name" class="form-input" placeholder="请输入您的姓名" required style="width: 100%; padding: 0.875rem 1rem; border: 2px solid var(--border); border-radius: 10px; font-size: 1rem; font-family: inherit; transition: all 0.3s ease;">
+                </div>
+                
+                <div class="form-group">
+                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: var(--text);">所负责的部门 <span style="color: var(--danger);">*</span></label>
+                    <input type="text" name="respondent_dept" class="form-input" placeholder="请输入您负责的部门名称" required style="width: 100%; padding: 0.875rem 1rem; border: 2px solid var(--border); border-radius: 10px; font-size: 1rem; font-family: inherit; transition: all 0.3s ease;">
+                </div>
+            </div>
+
+            <!-- 第一部分：整体印象 -->
+            <div class="question-card">
+                <div class="question-title">
+                    <span class="question-number">1</span>
+                    先来个快速热身！整体而言，你对目前的试用期管理系统感觉如何？
+                </div>
+                <div class="question-desc">放下包袱，选最戳中你内心的那个～</div>
+                
+                <label class="option-item">
+                    <input type="radio" name="q1" value="满意" required>
+                    <span class="option-icon">😊</span>
+                    <div class="option-text">
+                        挺满意的
+                        <div class="option-sub">流程顺畅，支持到位，基本满足需求</div>
+                    </div>
+                </label>
+                
+                <label class="option-item">
+                    <input type="radio" name="q1" value="优化中">
+                    <span class="option-icon">🤔</span>
+                    <div class="option-text">
+                        还行，但有优化空间
+                        <div class="option-sub">部分环节不错，但有些地方想吐槽</div>
+                    </div>
+                </label>
+                
+                <label class="option-item">
+                    <input type="radio" name="q1" value="待提升">
+                    <span class="option-icon">😅</span>
+                    <div class="option-text">
+                        说实话，体验一般
+                        <div class="option-sub">流程繁琐或体验不佳，期待改善</div>
+                    </div>
+                </label>
+            </div>
+
+            <!-- 第二部分：流程现状 -->
+            <div class="section-divider">
+                <span class="section-tag">📋 聊聊你的工作流程</span>
+            </div>
+
+            <div class="question-card">
+                <div class="question-title">
+                    <span class="question-number">2</span>
+                    你们部门现在的试用期考核，一般是怎样操作的？
+                </div>
+                <div class="question-desc">想了解大家的"实战"模式～</div>
+                
+                <label class="option-item">
+                    <input type="radio" name="q2" value="严格执行" required>
+                    <span class="option-icon">📅</span>
+                    <div class="option-text">
+                        按部就班型
+                        <div class="option-sub">严格按IDP系统节点走：目标制定→阶段评估→转正评估→审批</div>
+                    </div>
+                </label>
+                
+                <label class="option-item">
+                    <input type="radio" name="q2" value="灵活执行">
+                    <span class="option-icon">🔧</span>
+                    <div class="option-text">
+                        系统+补充型
+                        <div class="option-sub">IDP节点基础上，还会额外做月度回顾（线上或线下）</div>
+                    </div>
+                </label>
+                
+                <label class="option-item">
+                    <input type="radio" name="q2" value="自主安排">
+                    <span class="option-icon">🎨</span>
+                    <div class="option-text">
+                        业务主导型
+                        <div class="option-sub">主要按业务侧自己节奏来，系统就是个记录工具</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="question-card">
+                <div class="question-title">
+                    <span class="question-number">3</span>
+                    如果只能选一个，你更希望考核周期是？
+                </div>
+                <div class="question-desc">理想很丰满，现实...先选个理想的 😄</div>
+                
+                <label class="option-item">
+                    <input type="radio" name="q3" value="月度" required>
+                    <span class="option-icon">📆</span>
+                    <div class="option-text">
+                        月度考核
+                        <div class="option-sub">节奏快，及时反馈，问题早发现早解决</div>
+                    </div>
+                </label>
+                
+                <label class="option-item">
+                    <input type="radio" name="q3" value="季度">
+                    <span class="option-icon">🗓️</span>
+                    <div class="option-text">
+                        季度考核（保持现状）
+                        <div class="option-sub">节奏适中，给新人更多适应和成长时间</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="question-card">
+                <div class="question-title">
+                    <span class="question-number">4</span>
+                    你希望 IDP 系统扮演什么角色？
+                </div>
+                <div class="option-desc">是严谨的"监工"还是贴心的"小助手"？</div>
+                
+                <label class="option-item">
+                    <input type="radio" name="q4" value="强制执行" required>
+                    <span class="option-icon">🎯</span>
+                    <div class="option-text">
+                        严谨的流程把控者
+                        <div class="option-sub">流程可视化、节点固定、保障时效，该有的都不能少</div>
+                    </div>
+                </label>
+                
+                <label class="option-item">
+                    <input type="radio" name="q4" value="辅助引导">
+                    <span class="option-icon">💡</span>
+                    <div class="option-text">
+                        贴心的智能助手
+                        <div class="option-sub">有提醒但不打扰，可调整且灵活，不增加负担</div>
+                    </div>
+                </label>
+            </div>
+
+            <!-- 第三部分：导师管理 -->
+            <div class="section-divider">
+                <span class="section-tag">👨‍🏫 聊聊导师/主管那些事</span>
+            </div>
+
+            <div class="question-card">
+                <div class="question-title">
+                    <span class="question-number">5</span>
+                    在你们部门，带教新人这件事会跟导师/主管的绩效或晋升挂钩吗？
+                </div>
+                
+                <label class="option-item">
+                    <input type="radio" name="q5" value="是" required>
+                    <span class="option-icon">✅</span>
+                    <span class="option-text">是的，带教质量算在考核里</span>
+                </label>
+                
+                <label class="option-item">
+                    <input type="radio" name="q5" value="否">
+                    <span class="option-icon">❌</span>
+                    <span class="option-text">暂时没有，主要靠自觉</span>
+                </label>
+                
+                <label class="option-item">
+                    <input type="radio" name="q5" value="不确定">
+                    <span class="option-icon">🤷</span>
+                    <span class="option-text">不太清楚/看情况</span>
+                </label>
+            </div>
+
+            <div class="question-card">
+                <div class="question-title">
+                    <span class="question-number">6</span>
+                    如果发现新员工试用期表现"不太理想"，你/你们主管的第一反应通常是？
+                </div>
+                <div class="question-desc">两种思路，没有对错，只看哪种更契合团队风格</div>
+                
+                <label class="option-item">
+                    <input type="radio" name="q6" value="改善计划" required>
+                    <span class="option-icon">⚙️</span>
+                    <div class="option-text">
+                        先给机会，启动改善计划
+                        <div class="option-sub">制定明确改进措施和时间节点，给缓冲期，流程化留痕</div>
+                    </div>
+                </label>
+                
+                <label class="option-item">
+                    <input type="radio" name="q6" value="快速决策">
+                    <span class="option-icon">🚪</span>
+                    <div class="option-text">
+                        快速决策，及时止损
+                        <div class="option-sub">基于"不合适尽早结束"原则，降低双方沉没成本</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="question-card">
+                <div class="question-title">
+                    <span class="question-number">7</span>
+                    为了让导师/主管更好地带新人，你觉得他们最需要哪类支持？（可多选）
+                </div>
+                
+                <label class="option-item">
+                    <input type="checkbox" name="q7" value="工具赋能">
+                    <span class="option-icon">📚</span>
+                    <div class="option-text">
+                        工具加持
+                        <div class="option-sub">更智能的系统、自动化提醒、数据看板一目了然</div>
+                    </div>
+                </label>
+                
+                <label class="option-item">
+                    <input type="checkbox" name="q7" value="专业培训">
+                    <span class="option-icon">👥</span>
+                    <div class="option-text">
+                        专业培训
+                        <div class="option-sub">试用期管理方法论、沟通技巧、真实案例分享</div>
+                    </div>
+                </label>
+                
+                <label class="option-item">
+                    <input type="checkbox" name="q7" value="经验沉淀">
+                    <span class="option-icon">📖</span>
+                    <div class="option-text">
+                        经验沉淀
+                        <div class="option-sub">优秀导师带教手册、新人常见问题FAQ、最佳实践库</div>
+                    </div>
+                </label>
+                
+                <label class="option-item">
+                    <input type="checkbox" name="q7" value="激励认可">
+                    <span class="option-icon">🏆</span>
+                    <div class="option-text">
+                        激励认可
+                        <div class="option-sub">带教成果被看见，有明确的荣誉或物质激励</div>
+                    </div>
+                </label>
+            </div>
+
+            <!-- 第四部分：文化与仪式感 -->
+            <div class="section-divider">
+                <span class="section-tag">🎉 聊聊团队氛围与仪式感</span>
+            </div>
+
+            <div class="question-card">
+                <div class="question-title">
+                    <span class="question-number">8</span>
+                    目前部门在新人试用期期间，会组织哪些线下活动？（可多选）
+                </div>
+                
+                <label class="option-item">
+                    <input type="checkbox" name="q8" value="正式会议">
+                    <span class="option-icon">🎉</span>
+                    <div class="option-text">
+                        正式场合
+                        <div class="option-sub">入职欢迎会、转正答辩会、分享交流会等</div>
+                    </div>
+                </label>
+                
+                <label class="option-item">
+                    <input type="checkbox" name="q8" value="轻量融入">
+                    <span class="option-icon">🍵</span>
+                    <div class="option-text">
+                        轻松融入
+                        <div class="option-sub">团队聚餐、下午茶、非正式的一对一面谈</div>
+                    </div>
+                </label>
+                
+                <label class="option-item">
+                    <input type="checkbox" name="q8" value="暂无">
+                    <span class="option-icon">📝</span>
+                    <div class="option-text">
+                        暂无特别安排
+                        <div class="option-sub">主要靠日常工作中的自然融入</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="question-card">
+                <div class="question-title">
+                    <span class="question-number">9</span>
+                    员工转正时，你们一般采用哪种"仪式感"方式？
+                </div>
+                
+                <label class="option-item">
+                    <input type="radio" name="q9" value="庆祝型" required>
+                    <span class="option-icon">🎊</span>
+                    <div class="option-text">
+                        庆祝型
+                        <div class="option-sub">团队聚餐、下午茶，轻松愉快的氛围</div>
+                    </div>
+                </label>
+                
+                <label class="option-item">
+                    <input type="radio" name="q9" value="表彰型">
+                    <span class="option-icon">📢</span>
+                    <div class="option-text">
+                        表彰型
+                        <div class="option-sub">发送部门内祝贺邮件或公告，让更多人知道</div>
+                    </div>
+                </label>
+                
+                <label class="option-item">
+                    <input type="radio" name="q9" value="务实型">
+                    <span class="option-icon">💼</span>
+                    <div class="option-text">
+                        务实型
+                        <div class="option-sub">一对一深度沟通，聊职业发展、明确下一步目标</div>
+                    </div>
+                </label>
+                
+                <label class="option-item">
+                    <input type="radio" name="q9" value="暂无">
+                    <span class="option-icon">⏭️</span>
+                    <div class="option-text">
+                        暂无特别举措
+                        <div class="option-sub">系统状态变更就完事了，低调处理</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="question-card">
+                <div class="question-title">
+                    <span class="question-number">10</span>
+                    如果预算有限，只能选一种方式来提升转正仪式感，你会优先选？
+                </div>
+                
+                <label class="option-item">
+                    <input type="radio" name="q10" value="餐饮" required>
+                    <span class="option-icon">🍽️</span>
+                    <div class="option-text">
+                        美食攻势
+                        <div class="option-sub">提供餐饮茶点，创造轻松聚会氛围，胃暖了心就近了</div>
+                    </div>
+                </label>
+                
+                <label class="option-item">
+                    <input type="radio" name="q10" value="纪念品">
+                    <span class="option-icon">🎁</span>
+                    <div class="option-text">
+                        专属纪念
+                        <div class="option-sub">定制证书、徽章、文化衫等有形的"转正证明"</div>
+                    </div>
+                </label>
+                
+                <label class="option-item">
+                    <input type="radio" name="q10" value="影像">
+                    <span class="option-icon">📸</span>
+                    <div class="option-text">
+                        影像记录
+                        <div class="option-sub">拍照/录像、制作纪念卡片或海报，留下珍贵瞬间</div>
+                    </div>
+                </label>
+            </div>
+
+            <!-- 第五部分：开放建议 -->
+            <div class="section-divider">
+                <span class="section-tag">💬 最后的建议</span>
+            </div>
+
+            <div class="question-card">
+                <div class="question-title">
+                    <span class="question-number">11</span>
+                    关于 IDP 试用期管理系统，你最迫切的 1-2 个改进建议是什么？
+                </div>
+                <div class="question-desc">畅所欲言！无论是功能需求、流程优化还是体验提升，我们都想听～</div>
+                
+                <textarea name="q11" placeholder="例如：希望增加XX功能、简化XX流程、优化XX体验..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">🚀 提交问卷</button>
+        </form>
+
+        <!-- 成功页面 -->
+        <div class="success-page hidden" id="success-page">
+            <div class="success-icon">🎉</div>
+            <h2>感谢你的反馈！</h2>
+            <p>你的意见对我们非常宝贵～<br>我们会认真阅读每一份问卷，持续优化产品体验！</p>
+        </div>
+    </div>
+
+    <script>
+        // 进度条更新
+        const form = document.getElementById('survey-form');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const totalQuestions = 13; // 11个原问题 + 2个基本信息字段
+
+        function updateProgress() {
+            let answered = 0;
+            
+            // 检查基本信息字段
+            const nameField = document.querySelector('input[name="respondent_name"]');
+            const deptField = document.querySelector('input[name="respondent_dept"]');
+            if (nameField && nameField.value.trim()) answered++;
+            if (deptField && deptField.value.trim()) answered++;
+            
+            // 检查单选题
+            for (let i = 1; i <= 10; i++) {
+                const q = document.querySelector(`input[name="q${i}"]:checked`);
+                if (q) answered++;
+            }
+            
+            // 检查文本题
+            const q11 = document.querySelector('textarea[name="q11"]');
+            if (q11 && q11.value.trim()) answered++;
+            
+            const percent = Math.round((answered / totalQuestions) * 100);
+            progressBar.style.width = percent + '%';
+            progressText.textContent = `已完成 ${answered}/${totalQuestions} 题 (${percent}%)`;
+        }
+
+        // 监听所有输入变化
+        form.addEventListener('change', updateProgress);
+        form.addEventListener('input', updateProgress);
+        
+        // 文本输入框实时监听
+        document.querySelectorAll('input[type="text"], textarea').forEach(input => {
+            input.addEventListener('input', updateProgress);
+        });
+
+        // 选项点击效果
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                if (e.target.tagName !== 'INPUT') {
+                    const input = this.querySelector('input');
+                    input.checked = !input.checked;
+                }
+                
+                // 单选框组处理
+                const input = this.querySelector('input');
+                const name = input.name;
+                
+                if (input.type === 'radio') {
+                    document.querySelectorAll(`input[name="${name}"]`).forEach(radio => {
+                        radio.closest('.option-item').classList.remove('selected');
+                    });
+                }
+                
+                if (input.checked) {
+                    this.classList.add('selected');
+                } else {
+                    this.classList.remove('selected');
+                }
+                
+                updateProgress();
+            });
+        });
+
+        // 表单提交
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.querySelector('.btn-submit');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '📤 提交中...';
+            
+            // 收集数据
+            const formData = new FormData(form);
+            const data = {};
+            
+            for (let [key, value] of formData.entries()) {
+                if (data[key]) {
+                    if (!Array.isArray(data[key])) {
+                        data[key] = [data[key]];
+                    }
+                    data[key].push(value);
+                } else {
+                    data[key] = value;
+                }
+            }
+            
+            try {
+                // 提交到后端 API
+                const apiUrl = window.location.hostname === 'localhost' 
+                    ? 'http://localhost:3000/api/submit'
+                    : '/api/submit';
+                    
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // 显示成功页面
+                    form.classList.add('hidden');
+                    document.getElementById('header-section').classList.add('hidden');
+                    document.getElementById('success-page').classList.remove('hidden');
+                } else {
+                    alert('提交失败：' + (result.error || '请稍后重试'));
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '🚀 提交问卷';
+                }
+            } catch (error) {
+                console.error('Submit error:', error);
+                alert('网络错误，请检查网络连接后重试');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 提交问卷';
+            }
+        });
+
+        // 初始化进度
+        updateProgress();
+    </script>
+</body>
+</html>

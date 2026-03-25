@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>调研数据管理后台</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Playfair+Display:wght@600;700&display=swap');
+        
+        :root {
+            --primary: #2D3436;
+            --accent: #6C5CE7;
+            --accent-light: #A29BFE;
+            --success: #00B894;
+            --warning: #FDCB6E;
+            --danger: #E74C3C;
+            --info: #3498DB;
+            --bg: #F8F9FA;
+            --card: #FFFFFF;
+            --text: #2D3436;
+            --text-light: #636E72;
+            --border: #E9ECEF;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* 头部样式 */
+        .header {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            color: white;
+            box-shadow: var(--shadow);
+        }
+        
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.05rem;
+        }
+        
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-top: 0.25rem;
+        }
+        
+        /* 操作栏 */
+        .action-bar {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .btn {
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5B4BC4;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #00A383;
+            transform: translateY(-2px);
+        }
+        
+        .btn-info {
+            background: var(--info);
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background: #2980B9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #C0392B;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: var(--border);
+            color: var(--text);
+        }
+        
+        .btn-secondary:hover {
+            background: #DEE2E6;
+        }
+        
+        /* 数据表格 */
+        .data-section {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        th {
+            background: #F8F9FA;
+            font-weight: 600;
+            color: var(--primary);
+            white-space: nowrap;
+        }
+        
+        tr:hover {
+            background: #F8F9FA;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .cell-content {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .cell-content:hover {
+            white-space: normal;
+            overflow: visible;
+        }
+        
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-light);
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        /* Toast 提示 */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 详情弹窗 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 20px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+            padding: 0.25rem;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            max-height: calc(80vh - 80px);
+        }
+        
+        .detail-item {
+            margin-bottom: 1.25rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .detail-value {
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        /* 标签样式 */
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .tag-success {
+            background: rgba(0,184,148,0.1);
+            color: var(--success);
+        }
+        
+        .tag-warning {
+            background: rgba(253,203,110,0.2);
+            color: #D4A017;
+        }
+        
+        .tag-info {
+            background: rgba(52,152,219,0.1);
+            color: var(--info);
+        }
+        
+        /* 筛选区域 */
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-input {
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            min-width: 200px;
+        }
+        
+        .filter-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        /* 分页 */
+        .pagination {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+        
+        .page-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .page-btn:hover, .page-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .hidden { display: none !important; }
+        
+        @media (max-width: 768px) {
+            .header { padding: 1.5rem; }
+            .header h1 { font-size: 1.5rem; }
+            .action-bar { flex-direction: column; align-items: stretch; }
+            .btn { width: 100%; justify-content: center; }
+            th, td { padding: 0.75rem; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>📊 调研数据管理后台</h1>
+            <p>试用期管理体验调研 - 数据汇总与分析</p>
+        </div>
+        
+        <!-- 统计概览 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📝</div>
+                <div class="stat-value" id="total-count">0</div>
+                <div class="stat-label">总回收量</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-value" id="today-count">0</div>
+                <div class="stat-label">今日提交</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏢</div>
+                <div class="stat-value" id="dept-count">0</div>
+                <div class="stat-label">覆盖部门</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏰</div>
+                <div class="stat-value" id="last-time">-</div>
+                <div class="stat-label">最近提交</div>
+            </div>
+        </div>
+        
+        <!-- 操作栏 -->
+        <div class="action-bar">
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                <button class="btn btn-success" onclick="exportToExcel()">
+                    📥 导出 Excel
+                </button>
+                <button class="btn btn-info" onclick="exportToCSV()">
+                    📄 导出 CSV
+                </button>
+                <button class="btn btn-primary" onclick="exportToJSON()">
+                    💾 导出 JSON
+                </button>
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+                <button class="btn btn-secondary" onclick="refreshData()">
+                    🔄 刷新
+                </button>
+                <button class="btn btn-danger" onclick="clearAllData()">
+                    🗑️ 清空数据
+                </button>
+            </div>
+        </div>
+        
+        <!-- 筛选栏 -->
+        <div class="data-section">
+            <div class="filter-bar">
+                <input type="text" class="filter-input" id="filter-name" placeholder="🔍 搜索姓名..." oninput="filterData()">
+                <input type="text" class="filter-input" id="filter-dept" placeholder="🔍 搜索部门..." oninput="filterData()">
+                <select class="filter-input" id="filter-satisfaction" onchange="filterData()" style="min-width: 150px;">
+                    <option value="">📊 满意度筛选</option>
+                    <option value="满意">😊 满意</option>
+                    <option value="优化中">🤔 优化中</option>
+                    <option value="待提升">😅 待提升</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- 数据表格 -->
+        <div class="data-section">
+            <div class="section-title">
+                📋 问卷明细
+                <span id="record-count" style="font-size: 0.9rem; color: var(--text-light); font-weight: 400;">(共 0 条)</span>
+            </div>
+            
+            <div id="data-table-container">
+                <div class="empty-state">
+                    <div class="empty-icon">📭</div>
+                    <p>暂无数据<br>请在 survey.html 页面提交问卷后查看</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 详情弹窗 -->
+    <div class="modal-overlay" id="detail-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">📋 问卷详情</div>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body" id="modal-content">
+                <!-- 动态填充 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        let allResponses = [];
+        let filteredResponses = [];
+        
+        // 问题映射表
+        const questionMap = {
+            'respondent_name': '受访人姓名',
+            'respondent_dept': '所属部门',
+            'q1': '整体满意度',
+            'q2': '考核节奏',
+            'q3': '考核周期偏好',
+            'q4': '系统定位期望',
+            'q5': '带教与绩效挂钩',
+            'q6': '不达预期处理方式',
+            'q7': '导师支持需求',
+            'q8': '线下活动类型',
+            'q9': '转正仪式感',
+            'q10': '预算优先级',
+            'q11': '改进建议'
+        };
+        
+        // 加载数据
+        function loadData() {
+            const data = localStorage.getItem('survey_responses');
+            if (data) {
+                allResponses = JSON.parse(data);
+                filteredResponses = [...allResponses];
+            }
+            updateStats();
+            renderTable();
+        }
+        
+        // 更新统计
+        function updateStats() {
+            const totalCount = allResponses.length;
+            document.getElementById('total-count').textContent = totalCount;
+            
+            // 今日提交数
+            const today = new Date().toDateString();
+            const todayCount = allResponses.filter(r => {
+                const d = new Date(r.submittedAt);
+                return d.toDateString() === today;
+            }).length;
+            document.getElementById('today-count').textContent = todayCount;
+            
+            // 覆盖部门数
+            const depts = new Set();
+            allResponses.forEach(r => {
+                if (r.data && r.data.respondent_dept) {
+                    depts.add(r.data.respondent_dept);
+                }
+            });
+            document.getElementById('dept-count').textContent = depts.size;
+            
+            // 最近提交时间
+            if (allResponses.length > 0) {
+                const last = allResponses[allResponses.length - 1];
+                document.getElementById('last-time').textContent = formatTime(last.submittedAt);
+            } else {
+                document.getElementById('last-time').textContent = '-';
+            }
+        }
+        
+        // 格式化时间
+        function formatTime(timeStr) {
+            if (!timeStr) return '-';
+            const date = new Date(timeStr);
+            const now = new Date();
+            const diff = (now - date) / 1000; // 秒
+            
+            if (diff < 60) return '刚刚';
+            if (diff < 3600) return Math.floor(diff / 60) + '分钟前';
+            if (diff < 86400) return Math.floor(diff / 3600) + '小时前';
+            return date.toLocaleDateString('zh-CN');
+        }
+        
+        // 渲染表格
+        function renderTable() {
+            const container = document.getElementById('data-table-container');
+            document.getElementById('record-count').textContent = `(共 ${filteredResponses.length} 条)`;
+            
+            if (filteredResponses.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <p>${allResponses.length === 0 ? '暂无数据<br>请在 survey.html 页面提交问卷后查看' : '没有匹配的数据'}</p>
+                    </div>`;
+                return;
+            }
+            
+            // 反转数组，最新的在前
+            const reversed = [...filteredResponses].reverse();
+            
+            let html = `
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>提交时间</th>
+                                <th>姓名</th>
+                                <th>部门</th>
+                                <th>整体满意度</th>
+                                <th>考核节奏</th>
+                                <th>系统定位</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+            
+            reversed.forEach((item, index) => {
+                const data = item.data || {};
+                const satisfaction = data.q1 || '-';
+                let satisfactionTag = '';
+                
+                if (satisfaction === '满意') {
+                    satisfactionTag = '<span class="tag tag-success">😊 满意</span>';
+                } else if (satisfaction === '优化中') {
+                    satisfactionTag = '<span class="tag tag-warning">🤔 优化中</span>';
+                } else if (satisfaction === '待提升') {
+                    satisfactionTag = '<span class="tag tag-info">😅 待提升</span>';
+                } else {
+                    satisfactionTag = satisfaction;
+                }
+                
+                html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.submittedAt || '-'}</td>
+                        <td>${data.respondent_name || '-'}</td>
+                        <td>${data.respondent_dept || '-'}</td>
+                        <td>${satisfactionTag}</td>
+                        <td>${data.q2 || '-'}</td>
+                        <td>${data.q4 || '-'}</td>
+                        <td>
+                            <button class="btn btn-info" style="padding: 0.5rem 1rem; font-size: 0.9rem;" onclick="showDetail('${item.id}')">
+                                查看详情
+                            </button>
+                        </td>
+                    </tr>`;
+            });
+            
+            html += `</tbody></table></div>`;
+            container.innerHTML = html;
+        }
+        
+        // 筛选数据
+        function filterData() {
+            const nameFilter = document.getElementById('filter-name').value.toLowerCase();
+            const deptFilter = document.getElementById('filter-dept').value.toLowerCase();
+            const satisfactionFilter = document.getElementById('filter-satisfaction').value;
+            
+            filteredResponses = allResponses.filter(item => {
+                const data = item.data || {};
+                
+                const matchName = !nameFilter || (data.respondent_name || '').toLowerCase().includes(nameFilter);
+                const matchDept = !deptFilter || (data.respondent_dept || '').toLowerCase().includes(deptFilter);
+                const matchSatisfaction = !satisfactionFilter || data.q1 === satisfactionFilter;
+                
+                return matchName && matchDept && matchSatisfaction;
+            });
+            
+            renderTable();
+        }
+        
+        // 显示详情
+        function showDetail(id) {
+            const item = allResponses.find(r => r.id === id);
+            if (!item) return;
+            
+            const data = item.data || {};
+            let content = `
+                <div class="detail-item">
+                    <div class="detail-label">提交时间</div>
+                    <div class="detail-value">${item.submittedAt}</div>
+                </div>`;
+            
+            // 按顺序显示所有问题
+            Object.keys(questionMap).forEach(key => {
+                let value = data[key];
+                if (Array.isArray(value)) {
+                    value = value.join('、');
+                }
+                if (!value) value = '-';
+                
+                content += `
+                    <div class="detail-item">
+                        <div class="detail-label">${questionMap[key]}</div>
+                        <div class="detail-value">${value}</div>
+                    </div>`;
+            });
+            
+            document.getElementById('modal-content').innerHTML = content;
+            document.getElementById('detail-modal').classList.add('show');
+        }
+        
+        // 关闭弹窗
+        function closeModal() {
+            document.getElementById('detail-modal').classList.remove('show');
+        }
+        
+        // 导出Excel（CSV格式）
+        function exportToExcel() {
+            if (allResponses.length === 0) {
+                showToast('暂无数据可导出');
+                return;
+            }
+            
+            const headers = Object.values(questionMap);
+            const keys = Object.keys(questionMap);
+            
+            let csv = '\uFEFF'; // BOM for UTF-8
+            csv += headers.join(',') + '\n';
+            
+            allResponses.forEach(item => {
+                const data = item.data || {};
+                const row = keys.map(key => {
+                    let value = data[key];
+                    if (Array.isArray(value)) {
+                        value = value.join('; ');
+                    }
+                    // 处理包含逗号或换行符的情况
+                    if (value && (value.includes(',') || value.includes('\n') || value.includes('"'))) {
+                        value = '"' + value.replace(/"/g, '""') + '"';
+                    }
+                    return value || '';
+                });
+                csv += row.join(',') + '\n';
+            });
+            
+            downloadFile(csv, 'survey_data.csv', 'text/csv;charset=utf-8;');
+            showToast('Excel导出成功！');
+        }
+        
+        // 导出CSV
+        function exportToCSV() {
+            exportToExcel(); // 同上
+        }
+        
+        // 导出JSON
+        function exportToJSON() {
+            if (allResponses.length === 0) {
+                showToast('暂无数据可导出');
+                return;
+            }
+            
+            const jsonStr = JSON.stringify(allResponses, null, 2);
+            downloadFile(jsonStr, 'survey_data.json', 'application/json');
+            showToast('JSON导出成功！');
+        }
+        
+        // 下载文件
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+        
+        // 刷新数据
+        function refreshData() {
+            loadData();
+            showToast('数据已刷新');
+        }
+        
+        // 清空数据
+        function clearAllData() {
+            if (allResponses.length === 0) {
+                showToast('暂无数据需要清空');
+                return;
+            }
+            
+            if (confirm(`确定要清空所有 ${allResponses.length} 条问卷数据吗？\n此操作不可恢复！`)) {
+                localStorage.removeItem('survey_responses');
+                allResponses = [];
+                filteredResponses = [];
+                updateStats();
+                renderTable();
+                showToast('数据已清空');
+            }
+        }
+        
+        // 显示提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 点击遮罩关闭弹窗
+        document.getElementById('detail-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
+        // 初始化
+        loadData();
+    </script>
+</body>
+</html>
