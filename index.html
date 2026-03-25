@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>部门月会互动游戏中心</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { text-align: center; color: white; margin-bottom: 50px; }
+        header h1 { font-size: 2.8em; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        header p { font-size: 1.3em; opacity: 0.95; }
+        .months-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+        .month-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .month-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 6px;
+        }
+        .month-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .month-card:nth-child(1)::before { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .month-card:nth-child(2)::before { background: linear-gradient(135deg, #e74c3c, #f39c12); }
+        .month-card:nth-child(3)::before { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .month-card:nth-child(4)::before { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .month-card:nth-child(5)::before { background: linear-gradient(135deg, #fa8b3b, #dd716e); }
+        .month-card:nth-child(6)::before { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .month-card:nth-child(7)::before { background: linear-gradient(135deg, #f6d365, #fda085); }
+        .month-card:nth-child(8)::before { background: linear-gradient(135deg, #ff9a9e, #fecfef); }
+        .month-card:nth-child(9)::before { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
+        .month-card:nth-child(10)::before { background: linear-gradient(135deg, #d38312, #a83279); }
+        .month-card:nth-child(11)::before { background: linear-gradient(135deg, #f5af19, #f12711); }
+        .month-card:nth-child(12)::before { background: linear-gradient(135deg, #134e5e, #71b280); }
+        .month-icon { font-size: 4em; margin-bottom: 15px; display: block; }
+        .month-name { font-size: 1.4em; font-weight: bold; color: #333; margin-bottom: 8px; }
+        .month-game { color: #667eea; font-weight: 600; margin-bottom: 12px; font-size: 1em; }
+        .month-desc { color: #666; font-size: 0.9em; line-height: 1.5; }
+        .month-status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin-top: 15px;
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 30px;
+            opacity: 0.9;
+        }
+        .footer p { margin-bottom: 10px; }
+        .instructions {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .instructions h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .instructions ul {
+            margin-left: 25px;
+            color: #666;
+            line-height: 2;
+        }
+        .instructions li { margin-bottom: 8px; }
+        @media (max-width: 768px) {
+            header h1 { font-size: 2em; }
+            .months-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎮 部门月会互动游戏中心</h1>
+            <p>每月一新游，快乐不间断！积分累计，年度兑奖！</p>
+        </header>
+
+        <div class="instructions">
+            <h2>📖 游戏说明</h2>
+            <ul>
+                <li>📅 每个月一个主题游戏，结合当月的节日和热点</li>
+                <li>⏱️ 每题限时 15 秒，答对得 10 分 + 时间奖励分</li>
+                <li>🏆 每月独立排行榜，积分可累计到年度总排名</li>
+                <li>🎁 年底根据总积分兑换精美奖品</li>
+                <li>💡 支持手机和电脑访问，随时随地参与</li>
+                <li>🔒 数据本地保存，更换设备需重新参与</li>
+            </ul>
+        </div>
+
+        <div class="months-grid">
+            <a href="games/january.html" class="month-card">
+                <span class="month-icon">🎊</span>
+                <div class="month-name">一月</div>
+                <div class="month-game">新年新气象</div>
+                <div class="month-desc">新年目标接龙 + 元旦知识问答，看看谁的目标最给力！</div>
+                <span class="month-status">🔓 进行中</span>
+            </a>
+            <a href="games/february.html" class="month-card">
+                <span class="month-icon">🏮</span>
+                <div class="month-name">二月</div>
+                <div class="month-game">元宵灯谜会</div>
+                <div class="month-desc">传统灯谜遇上春节习俗，猜对越多积分越高！</div>
+                <span class="month-status">⏳ 未开始</span>
+            </a>
+            <a href="games/march.html" class="month-card">
+                <span class="month-icon">🌸</span>
+                <div class="month-name">三月</div>
+                <div class="month-game">春暖花开</div>
+                <div class="month-desc">春天的花卉、节气知识大考验！</div>
+                <span class="month-status">⏳ 未开始</span>
+            </a>
+            <a href="games/april.html" class="month-card">
+                <span class="month-icon">🃏</span>
+                <div class="month-name">四月</div>
+                <div class="month-game">真假难辨</div>
+                <div class="month-desc">冷知识真假判断，考验你知识储备！</div>
+                <span class="month-status">⏳ 未开始</span>
+            </a>
+            <a href="games/may.html" class="month-card">
+                <span class="month-icon">💪</span>
+                <div class="month-name">五月</div>
+                <div class="month-game">劳动最光荣</div>
+                <div class="month-desc">效率工具知识挑战，工作效率达人就是你！</div>
+                <span class="month-status">⏳ 未开始</span>
+            </a>
+            <a href="games/june.html" class="month-card">
+                <span class="month-icon">🎈</span>
+                <div class="month-name">六月</div>
+                <div class="month-game">童心未泯</div>
+                <div class="month-desc">动画片、童年零食，带你重回美好童年时光！</div>
+                <span class="month-status">⏳ 未开始</span>
+            </a>
+            <a href="games/july.html" class="month-card">
+                <span class="month-icon">☀️</span>
+                <div class="month-name">七月</div>
+                <div class="month-game">盛夏时光</div>
+                <div class="month-desc">回顾上半年，迎接盛夏，知识降温大挑战！</div>
+                <span class="month-status">⏳ 未开始</span>
+            </a>
+            <a href="games/august.html" class="month-card">
+                <span class="month-icon">💕</span>
+                <div class="month-name">八月</div>
+                <div class="month-game">缘来是你</div>
+                <div class="month-desc">工作默契配对，看看你和谁是最佳搭档！</div>
+                <span class="month-status">⏳ 未开始</span>
+            </a>
+            <a href="games/september.html" class="month-card">
+                <span class="month-icon">🌕</span>
+                <div class="month-name">九月</div>
+                <div class="month-game">花好月圆</div>
+                <div class="month-desc">中秋节习俗、诗词、月饼知识！</div>
+                <span class="month-status">⏳ 未开始</span>
+            </a>
+            <a href="games/october.html" class="month-card">
+                <span class="month-icon">🎃</span>
+                <div class="month-name">十月</div>
+                <div class="month-game">金秋盛典</div>
+                <div class="month-desc">祖国河山、建国历史知识，为祖国庆生！</div>
+                <span class="month-status">⏳ 未开始</span>
+            </a>
+            <a href="games/november.html" class="month-card">
+                <span class="month-icon">🦃</span>
+                <div class="month-name">十一月</div>
+                <div class="month-game">感恩有你</div>
+                <div class="month-desc">感恩文化、感恩知识，传递温暖！</div>
+                <span class="month-status">⏳ 未开始</span>
+            </a>
+            <a href="games/december.html" class="month-card">
+                <span class="month-icon">🎄</span>
+                <div class="month-name">十二月</div>
+                <div class="month-game">年终盛典</div>
+                <div class="month-desc">回顾这一年的大事，展望新的一年！</div>
+                <span class="month-status">⏳ 未开始</span>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>🎯 年度积分排行榜将在 12 月公布</p>
+            <p>🏆 前五名将获得精美奖品</p>
+            <p style="margin-top: 20px; font-size: 0.9em;">© 2026 部门月会互动游戏中心</p>
+        </div>
+    </div>
+</body>
+</html>

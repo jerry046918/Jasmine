@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>问卷数据管理后台</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        
+        :root {
+            --primary: #2D3436;
+            --accent: #6C5CE7;
+            --accent-light: #A29BFE;
+            --success: #00B894;
+            --warning: #FDCB6E;
+            --danger: #E74C3C;
+            --bg: #F8F9FA;
+            --card: #FFFFFF;
+            --text: #2D3436;
+            --text-light: #636E72;
+            --border: #E9ECEF;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* 登录页 */
+        .login-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+        }
+        
+        .login-card {
+            background: var(--card);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .login-card h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .login-card p {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+        
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: var(--accent-light);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        /* 管理后台 */
+        .admin-header {
+            background: var(--card);
+            padding: 1.5rem 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .admin-header h1 {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .stats {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-secondary {
+            background: var(--border);
+            color: var(--text);
+        }
+        
+        .btn-secondary:hover {
+            background: #DEE2E6;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #00A383;
+        }
+        
+        .response-list {
+            background: var(--card);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        
+        .response-item {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .response-item:hover {
+            background: #F8F9FA;
+        }
+        
+        .response-item:last-child {
+            border-bottom: none;
+        }
+        
+        .response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .response-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+        
+        .response-dept {
+            display: inline-block;
+            background: var(--accent-light);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+        
+        .response-time {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        
+        .response-preview {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* 详情弹窗 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+        
+        .modal {
+            background: var(--card);
+            border-radius: 20px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .modal-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            font-size: 1.3rem;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        
+        .modal-body {
+            padding: 2rem;
+        }
+        
+        .detail-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .detail-value {
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-light);
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hidden { display: none !important; }
+        
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .admin-header { flex-direction: column; gap: 1rem; }
+            .stats { gap: 1rem; }
+            .response-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 登录页 -->
+        <div id="login-page" class="login-page">
+            <div class="login-card">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🔐</div>
+                <h1>管理后台登录</h1>
+                <p>请输入访问密码查看问卷数据</p>
+                
+                <div class="form-group">
+                    <label>访问密码</label>
+                    <input type="password" id="password" class="form-input" placeholder="请输入密码">
+                </div>
+                
+                <button id="login-btn" class="btn-primary">进入后台</button>
+                <p id="login-error" style="color: var(--danger); margin-top: 1rem; font-size: 0.9rem; display: none;">密码错误，请重试</p>
+            </div>
+        </div>
+        
+        <!-- 管理后台 -->
+        <div id="admin-page" class="hidden">
+            <div class="admin-header">
+                <div>
+                    <h1>📊 试用期管理体验调研 - 数据后台</h1>
+                    <p style="color: var(--text-light); font-size: 0.9rem; margin-top: 0.25rem;">实时查看问卷填写数据</p>
+                </div>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-count">0</div>
+                        <div class="stat-label">总回复数</div>
+                    </div>
+                </div>
+                <div class="admin-actions">
+                    <button class="btn btn-secondary" onclick="loadData()">🔄 刷新</button>
+                    <button class="btn btn-success" onclick="exportData()">📥 导出 Excel</button>
+                </div>
+            </div>
+            
+            <div id="response-list" class="response-list">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📋</div>
+                    <p>暂无数据，等待用户填写问卷...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 详情弹窗 -->
+    <div id="modal" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>📄 问卷详情</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- 动态填充 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let responses = [];
+        let password = '';
+        
+        // 登录
+        document.getElementById('login-btn').addEventListener('click', async () => {
+            const input = document.getElementById('password');
+            password = input.value.trim();
+            
+            if (!password) {
+                alert('请输入密码');
+                return;
+            }
+            
+            document.getElementById('login-btn').disabled = true;
+            document.getElementById('login-btn').textContent = '验证中...';
+            
+            const success = await loadData();
+            
+            if (success) {
+                document.getElementById('login-page').classList.add('hidden');
+                document.getElementById('admin-page').classList.remove('hidden');
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+                document.getElementById('login-btn').disabled = false;
+                document.getElementById('login-btn').textContent = '进入后台';
+            }
+        });
+        
+        // 回车登录
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('login-btn').click();
+            }
+        });
+        
+        // 加载数据
+        async function loadData() {
+            try {
+                const apiUrl = window.location.hostname === 'localhost' 
+                    ? 'http://localhost:3000/api/responses'
+                    : '/api/responses';
+                    
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${password}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    return false;
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    responses = result.responses;
+                    renderList();
+                    document.getElementById('total-count').textContent = result.count;
+                    return true;
+                }
+                
+                return false;
+            } catch (error) {
+                console.error('Load error:', error);
+                alert('加载数据失败，请检查网络连接');
+                return false;
+            }
+        }
+        
+        // 渲染列表
+        function renderList() {
+            const container = document.getElementById('response-list');
+            
+            if (responses.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <p>暂无数据，等待用户填写问卷...</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = responses.map((resp, index) => `
+                <div class="response-item" onclick="showDetail(${index})">
+                    <div class="response-header">
+                        <div>
+                            <span class="response-name">${resp.respondent_name}</span>
+                            <span class="response-dept">${resp.respondent_dept}</span>
+                        </div>
+                        <div class="response-time">${resp.submitted_at_cn}</div>
+                    </div>
+                    <div class="response-preview">
+                        Q1: ${resp.answers.q1 || '未填写'} | 
+                        Q2: ${resp.answers.q2 || '未填写'} | 
+                        Q3: ${resp.answers.q3 || '未填写'}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // 显示详情
+        function showDetail(index) {
+            const resp = responses[index];
+            const modalBody = document.getElementById('modal-body');
+            
+            const questionLabels = {
+                q1: '1. 整体而言，你对目前的试用期管理系统感觉如何？',
+                q2: '2. 你们部门现在的试用期考核，一般是怎样操作的？',
+                q3: '3. 如果只能选一个，你更希望考核周期是？',
+                q4: '4. 你希望 IDP 系统扮演什么角色？',
+                q5: '5. 在你们部门，带教新人这件事会跟导师/主管的绩效或晋升挂钩吗？',
+                q6: '6. 如果发现新员工试用期表现"不太理想"，你/你们主管的第一反应通常是？',
+                q7: '7. 为了让导师/主管更好地带新人，你觉得他们最需要哪类支持？（可多选）',
+                q8: '8. 目前部门在新人试用期期间，会组织哪些线下活动？（可多选）',
+                q9: '9. 员工转正时，你们一般采用哪种"仪式感"方式？',
+                q10: '10. 如果预算有限，只能选一种方式来提升转正仪式感，你会优先选？',
+                q11: '11. 关于 IDP 试用期管理系统，你最迫切的 1-2 个改进建议是什么？'
+            };
+            
+            let answersHtml = '';
+            for (let i = 1; i <= 11; i++) {
+                const key = `q${i}`;
+                const value = resp.answers[key];
+                if (value) {
+                    const displayValue = Array.isArray(value) ? value.join('、') : value;
+                    answersHtml += `
+                        <div class="detail-section">
+                            <div class="detail-label">${questionLabels[key]}</div>
+                            <div class="detail-value">${displayValue}</div>
+                        </div>
+                    `;
+                }
+            }
+            
+            modalBody.innerHTML = `
+                <div class="detail-section">
+                    <div class="detail-label">填写人</div>
+                    <div class="detail-value">${resp.respondent_name}（${resp.respondent_dept}）</div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">提交时间</div>
+                    <div class="detail-value">${resp.submitted_at_cn}</div>
+                </div>
+                <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
+                ${answersHtml}
+            `;
+            
+            document.getElementById('modal').classList.remove('hidden');
+        }
+        
+        // 关闭弹窗
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+        }
+        
+        // 点击遮罩关闭
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.id === 'modal') {
+                closeModal();
+            }
+        });
+        
+        // 导出数据
+        function exportData() {
+            if (responses.length === 0) {
+                alert('暂无数据可导出');
+                return;
+            }
+            
+            // 构建 CSV
+            const headers = ['序号', '姓名', '部门', '提交时间', 'Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8', 'Q9', 'Q10', 'Q11'];
+            
+            const rows = responses.map((resp, index) => {
+                const answers = resp.answers;
+                return [
+                    index + 1,
+                    resp.respondent_name,
+                    resp.respondent_dept,
+                    resp.submitted_at_cn,
+                    formatValue(answers.q1),
+                    formatValue(answers.q2),
+                    formatValue(answers.q3),
+                    formatValue(answers.q4),
+                    formatValue(answers.q5),
+                    formatValue(answers.q6),
+                    formatValue(answers.q7),
+                    formatValue(answers.q8),
+                    formatValue(answers.q9),
+                    formatValue(answers.q10),
+                    formatValue(answers.q11)
+                ];
+            });
+            
+            const csvContent = [headers, ...rows]
+                .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+                .join('\n');
+            
+            // 添加 BOM 以支持中文
+            const BOM = '\uFEFF';
+            const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `问卷数据_${new Date().toLocaleDateString('zh-CN')}.csv`;
+            link.click();
+        }
+        
+        function formatValue(value) {
+            if (!value) return '';
+            if (Array.isArray(value)) return value.join('、');
+            return value;
+        }
+    </script>
+</body>
+</html>
